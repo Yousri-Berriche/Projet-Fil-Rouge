@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fail2Ban Attack Monitor</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #1a1a2e; 
+            color: #fff; 
+            font-family: sans-serif; 
+        }
+        /* La carte doit avoir une taille définie pour s'afficher */
+        #map { 
+            height: 700px; 
+            width: 80%; 
+            margin: 50px auto; 
+            border-radius: 10px; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #e94560; 
+            margin-top: 20px; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚨 Attaques Fail2Ban Géolocalisées</h1>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // L doit être disponible à ce point !
+        
+        // Initialiser la carte et la centrer sur la moyenne du monde
+        var map = L.map('map').setView([20, 0], 2); // [lat, lon], zoom level
+        
+        // Ajouter la couche de tuiles (Tiles) - OpenStreetMap 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Fonction pour charger les données JSON
+        fetch('data.json')
+            .then(response => response.json()) // Convertir la réponse en objet JavaScript
+            .then(data => {
+                data.forEach(function(attack) {
+                    // Vérifier si les coordonnées sont valides (non nulles)
+                    if (attack.lat && attack.lon && attack.lat != 0.0) { 
+                        // Créer un marqueur pour chaque attaque
+                        L.marker([attack.lat, attack.lon])
+                            .addTo(map)
+                            // Ajouter une popup avec les informations de l'attaque
+                            .bindPopup(
+                                "<b>Attaque détectée!</b><br>" +
+                                "IP: " + attack.ip + "<br>" +
+                                "Pays: " + attack.country + 
+                                "<br>Lat/Lon: " + attack.lat + ", " + attack.lon
+                            );
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement ou du parsing du JSON:', error);
+                // Si la page échoue, afficher un message dans la console
+                alert('Erreur: Impossible de charger data.json. Vérifiez la console (F12) pour plus de détails.');
+            });
+    </script>
+
+</body>
+</html>

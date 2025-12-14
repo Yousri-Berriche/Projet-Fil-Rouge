@@ -1,0 +1,6 @@
+2024-12-05 14:00:01 fail2ban.actions: NOTICE [sshd] Ban 192.168.1.55
+2024-12-05 14:00:05 fail2ban.actions: NOTICE [apache] Ban 45.33.22.11
+2024-12-05 14:00:10 Info: System is running smoothly
+2024-12-05 14:00:15 fail2ban.actions: NOTICE [sshd] Ban 10.0.0.5
+2024-12-05 14:00:20 Error: Connection timeout
+2024-12-05 14:00:25 fail2ban.actions: NOTICE [nginx] Ban 8.8.8.8
